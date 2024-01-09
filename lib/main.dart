@@ -33,14 +33,14 @@ class LoginPage extends StatelessWidget {
               CustomTextField(
                   leadingIcon: Icons.mail_outline_rounded,
                   placeholderText: 'Enter your email',
-                  displayVisibilityIcon: false
-              ),
+                  displayVisibilityIcon: false),
               const SizedBox(height: 20),
               CustomTextField(
                   leadingIcon: Icons.lock_open_rounded,
                   placeholderText: 'Enter your password',
-                  displayVisibilityIcon: true
-              )
+                  displayVisibilityIcon: true),
+              const SizedBox(height: 20),
+              const PrimaryButton(text: 'LOGIN')
             ],
           ),
         ),
@@ -49,13 +49,48 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class CustomTextField extends StatefulWidget {
-  CustomTextField({
-    super.key,
-    required this.leadingIcon,
-    required this.placeholderText,
-    required this.displayVisibilityIcon
+class PrimaryButton extends StatelessWidget {
+  const PrimaryButton({
+    super.key, required this.text,
   });
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () {},
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)
+              ),
+            ),
+          shadowColor: MaterialStateProperty.all<Color>(Colors.blueAccent.withOpacity(0.8)),
+          elevation: MaterialStateProperty.all<double>(10.0),
+        ),
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(15),
+          child: Text(
+            text,
+            style: GoogleFonts.roboto(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Colors.white),
+          ),
+        ));
+  }
+}
+
+class CustomTextField extends StatefulWidget {
+  CustomTextField(
+      {super.key,
+      required this.leadingIcon,
+      required this.placeholderText,
+      required this.displayVisibilityIcon});
 
   final IconData leadingIcon;
   final String placeholderText;
@@ -79,40 +114,36 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      decoration: InputDecoration(
+        decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           hintText: widget.placeholderText,
-          hintStyle: GoogleFonts.roboto(
-            color: Colors.grey.shade400
-          ),
-          prefixIcon: Icon(
-              widget.leadingIcon,
-              color: Colors.grey.shade400
-          ),
-          suffixIcon: widget.displayVisibilityIcon ? IconButton(
-            icon: Icon(suffixIcon),
-            color: Colors.grey.shade400,
-            onPressed: () {
-              setState(() {
-                obscurePassword = !obscurePassword;
-                suffixIcon = obscurePassword
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined;
-              });
-            },
-          ) : null,
+          hintStyle: GoogleFonts.roboto(color: Colors.grey.shade400),
+          prefixIcon: Icon(widget.leadingIcon, color: Colors.grey.shade400),
+          suffixIcon: widget.displayVisibilityIcon
+              ? IconButton(
+                  icon: Icon(suffixIcon),
+                  color: Colors.grey.shade400,
+                  onPressed: () {
+                    setState(() {
+                      obscurePassword = !obscurePassword;
+                      suffixIcon = obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined;
+                    });
+                  },
+                )
+              : null,
           border: const UnderlineInputBorder(
-            borderSide:
-                BorderSide.none,
+            borderSide: BorderSide.none,
           ),
           filled: true,
           fillColor: Colors.grey.shade200,
-          contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
-      ),
-      obscureText: obscurePassword,
-      onChanged: (value) {
-        print('Typed $value');
-      }
-    );
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
+        ),
+        obscureText: obscurePassword,
+        onChanged: (value) {
+          print('Typed $value');
+        });
   }
 }
