@@ -40,7 +40,62 @@ class LoginPage extends StatelessWidget {
                   placeholderText: 'Enter your password',
                   displayVisibilityIcon: true),
               const SizedBox(height: 20),
-              const PrimaryButton(text: 'LOGIN')
+              const PrimaryButton(text: 'LOGIN'),
+              const SizedBox(height: 30),
+              Text(
+                'OR',
+                style: GoogleFonts.roboto(
+                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w600
+                ),
+              ),
+              const SizedBox(height: 30),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                          Icons.facebook_rounded,
+                          size: 35,
+                      ),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 30),
+                    SizedBox(
+                      height: 45,
+                      child: Image.network(
+                          'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
+                          fit:BoxFit.cover
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        'Don\'t have an account?',
+                        style: GoogleFonts.roboto(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w600
+                        ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Sign up',
+                      style: GoogleFonts.roboto(
+                        color: Colors.blueAccent,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700
+                      ),
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         ),
