@@ -30,6 +30,11 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(
+                  height: 100,
+                  child: Image.network('https://s3-eu-west-1.amazonaws.com/tpd/logos/5be01d787b5e5b0001ebb6bb/0x0.png')
+              ),
+              const SizedBox(height: 30),
               CustomTextField(
                   leadingIcon: Icons.mail_outline_rounded,
                   placeholderText: 'Enter your email',
