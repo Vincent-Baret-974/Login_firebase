@@ -3,15 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
-    super.key, required this.text,
+    super.key, required this.text, this.onPressed,
   });
 
   final String text;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.blueAccent),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(

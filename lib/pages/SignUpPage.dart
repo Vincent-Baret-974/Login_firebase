@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_firebase/widgets/PrimaryButton.dart';
@@ -5,7 +6,14 @@ import 'package:login_firebase/widgets/PrimaryButton.dart';
 import '../widgets/RegularTextField.dart';
 
 class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
+  SignUpPage({super.key});
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +39,30 @@ class SignUpPage extends StatelessWidget {
                   ),
               ),
               const SizedBox(height: 40),
-              const RegularTextField(placeholderText: 'Enter your email'),
+              RegularTextField(placeholderText: 'Enter your email', controller: _emailController),
               const SizedBox(height: 20),
-              const RegularTextField(placeholderText: 'Enter your name'),
+              RegularTextField(placeholderText: 'Enter your name', controller: _nameController),
               const SizedBox(height: 20),
-              const RegularTextField(placeholderText: 'Choose a password'),
+              RegularTextField(placeholderText: 'Choose a password', controller: _passwordController),
               const SizedBox(height: 20),
-              const RegularTextField(placeholderText: 'Confirm password'),
+              RegularTextField(placeholderText: 'Confirm password', controller: _confirmPasswordController),
               const SizedBox(height: 40),
-              const PrimaryButton(text: 'SIGN UP')
+              PrimaryButton(
+                  text: 'SIGN UP',
+                onPressed: () async {
+                  try {
+                    print('pressed');
+                    UserCredential userCredential =
+                        await _auth.createUserWithEmailAndPassword(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    );
+                    print('User ID: ${userCredential.user!.uid}');
+                  } catch (e) {
+                    print('Error: $e');
+                  }
+                },
+              )
             ],
           ),
         ),
