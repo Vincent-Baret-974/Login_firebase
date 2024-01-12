@@ -25,39 +25,32 @@ class LoginPage extends StatelessWidget {
             children: [
               SizedBox(
                   height: 100,
-                  child: Image.network('https://s3-eu-west-1.amazonaws.com/tpd/logos/5be01d787b5e5b0001ebb6bb/0x0.png')
-              ),
+                  child: Image.network(
+                      'https://s3-eu-west-1.amazonaws.com/tpd/logos/5be01d787b5e5b0001ebb6bb/0x0.png')),
               const SizedBox(height: 30),
               CustomTextField(
                   leadingIcon: Icons.mail_outline_rounded,
                   placeholderText: 'Enter your email',
                   displayVisibilityIcon: false,
-                controller: _emailController
-              ),
+                  controller: _emailController),
               const SizedBox(height: 20),
               CustomTextField(
                   leadingIcon: Icons.lock_open_rounded,
                   placeholderText: 'Enter your password',
                   displayVisibilityIcon: true,
-                  controller: _passwordController
-              ),
+                  controller: _passwordController),
               const SizedBox(height: 20),
               PrimaryButton(
-                  text: 'LOGIN',
-                  onPressed: () {
-                    logUserWith(
-                        _emailController.text,
-                        _passwordController.text
-                    );
-                  },
+                text: 'LOGIN',
+                onPressed: () {
+                  logUser(_emailController.text, _passwordController.text, context);
+                },
               ),
               const SizedBox(height: 30),
               Text(
                 'OR',
                 style: GoogleFonts.roboto(
-                    color: Colors.grey.shade400,
-                    fontWeight: FontWeight.w600
-                ),
+                    color: Colors.grey.shade400, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 30),
               Container(
@@ -76,8 +69,7 @@ class LoginPage extends StatelessWidget {
                       height: 45,
                       child: Image.network(
                           'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
-                          fit:BoxFit.cover
-                      ),
+                          fit: BoxFit.cover),
                     )
                   ],
                 ),
@@ -91,8 +83,7 @@ class LoginPage extends StatelessWidget {
                       'Don\'t have an account?',
                       style: GoogleFonts.roboto(
                           color: Colors.grey.shade400,
-                          fontWeight: FontWeight.w600
-                      ),
+                          fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width: 10),
                     GestureDetector(
@@ -107,8 +98,7 @@ class LoginPage extends StatelessWidget {
                         style: GoogleFonts.roboto(
                             color: Colors.blueAccent,
                             fontSize: 16,
-                            fontWeight: FontWeight.w700
-                        ),
+                            fontWeight: FontWeight.w700),
                       ),
                     )
                   ],
@@ -121,16 +111,41 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  void logUserWith(String email, String password) async {
+  void logUser(String email, String password, BuildContext context) async {
     try {
-      UserCredential userCredential =
-      await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
+
+      if (userCredential.user != null) {
+        if (!context.mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NewPage()),
+        );
+      }
       print('User ID: ${userCredential.user!.uid}');
     } catch (e) {
       print('Error: $e');
     }
+  }
+}
+
+class NewPage extends StatelessWidget {
+  const NewPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'New page',
+            style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
+          ),
+        ),
+        body: const Center(
+          child: Text('Welcome to the app'),
+        ));
   }
 }
