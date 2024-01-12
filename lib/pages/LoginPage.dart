@@ -1,17 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/CustomTextField.dart';
 import '../widgets/PrimaryButton.dart';
+import 'NewPage.dart';
 import 'SignUpPage.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
+
+  late FToast fToast;
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast();
+    fToast.init(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +62,7 @@ class LoginPage extends StatelessWidget {
                 text: 'LOGIN',
                 onPressed: () {
                   logUser(_emailController.text, _passwordController.text, context);
+                  FocusScope.of(context).unfocus(); // Dismiss keyboard
                 },
               ),
               const SizedBox(height: 30),
@@ -113,39 +132,57 @@ class LoginPage extends StatelessWidget {
 
   void logUser(String email, String password, BuildContext context) async {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      if (userCredential.user != null) {
-        if (!context.mounted) return;
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const NewPage()),
+      if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+        showToastMessage('Email and password must have a value.');
+      } else {
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
         );
+
+        if (userCredential.user != null) {
+          if (!context.mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NewPage()),
+          );
+          _emailController.text = "";
+          _passwordController.text = "";
+        }
       }
-      print('User ID: ${userCredential.user!.uid}');
+    } on FirebaseAuthException catch (exception) {
+      switch (exception.code) {
+        case 'invalid-email':
+          showToastMessage('Email is invalid');
+        case 'user-not-found':
+          showToastMessage('User not found. Please check your email.');
+          break;
+        case 'wrong-password':
+          showToastMessage('Incorrect password. Please try again.');
+          break;
+        default:
+          showToastMessage('Login failed.');
+      }
     } catch (e) {
-      print('Error: $e');
+      showToastMessage('An error occurred.');
     }
   }
-}
 
-class NewPage extends StatelessWidget {
-  const NewPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'New page',
-            style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
-          ),
-        ),
-        body: const Center(
-          child: Text('Welcome to the app'),
-        ));
+  void showToastMessage(String message) {
+    fToast.showToast(
+        child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+            child: Text(
+              message,
+              style: GoogleFonts.roboto(
+                  color: Colors.white
+              ),
+            )
+        )
+    );
   }
 }
