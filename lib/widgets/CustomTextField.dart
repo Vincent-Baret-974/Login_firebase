@@ -6,11 +6,12 @@ class CustomTextField extends StatefulWidget {
       {super.key,
         required this.leadingIcon,
         required this.placeholderText,
-        required this.displayVisibilityIcon});
+        required this.displayVisibilityIcon, required this.controller});
 
   final IconData leadingIcon;
   final String placeholderText;
   final bool displayVisibilityIcon;
+  final TextEditingController controller;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -30,6 +31,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+        controller: widget.controller,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           hintText: widget.placeholderText,

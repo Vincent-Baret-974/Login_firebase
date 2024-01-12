@@ -48,7 +48,7 @@ class SignUpPage extends StatelessWidget {
               RegularTextField(placeholderText: 'Confirm password', controller: _confirmPasswordController),
               const SizedBox(height: 40),
               PrimaryButton(
-                  text: 'SIGN UP',
+                text: 'SIGN UP',
                 onPressed: () async {
                   try {
                     print('pressed');

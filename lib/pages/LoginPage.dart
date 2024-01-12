@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -6,7 +7,11 @@ import '../widgets/PrimaryButton.dart';
 import 'SignUpPage.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +31,26 @@ class LoginPage extends StatelessWidget {
               CustomTextField(
                   leadingIcon: Icons.mail_outline_rounded,
                   placeholderText: 'Enter your email',
-                  displayVisibilityIcon: false),
+                  displayVisibilityIcon: false,
+                controller: _emailController
+              ),
               const SizedBox(height: 20),
               CustomTextField(
                   leadingIcon: Icons.lock_open_rounded,
                   placeholderText: 'Enter your password',
-                  displayVisibilityIcon: true),
+                  displayVisibilityIcon: true,
+                  controller: _passwordController
+              ),
               const SizedBox(height: 20),
-              const PrimaryButton(text: 'LOGIN'),
+              PrimaryButton(
+                  text: 'LOGIN',
+                  onPressed: () {
+                    logUserWith(
+                        _emailController.text,
+                        _passwordController.text
+                    );
+                  },
+              ),
               const SizedBox(height: 30),
               Text(
                 'OR',
@@ -102,5 +119,18 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void logUserWith(String email, String password) async {
+    try {
+      UserCredential userCredential =
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      print('User ID: ${userCredential.user!.uid}');
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }
