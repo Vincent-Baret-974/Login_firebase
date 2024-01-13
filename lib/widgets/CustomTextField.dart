@@ -6,12 +6,13 @@ class CustomTextField extends StatefulWidget {
       {super.key,
         required this.leadingIcon,
         required this.placeholderText,
-        required this.displayVisibilityIcon, required this.controller});
+        required this.displayVisibilityIcon, required this.controller, this.onChanged});
 
   final IconData leadingIcon;
   final String placeholderText;
   final bool displayVisibilityIcon;
   final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -60,8 +61,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           const EdgeInsets.symmetric(vertical: 20.0, horizontal: 0.0),
         ),
         obscureText: obscurePassword,
-        onChanged: (value) {
-          print('Typed $value');
-        });
+        onChanged: widget.onChanged
+      );
   }
 }

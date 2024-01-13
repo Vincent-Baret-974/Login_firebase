@@ -1,19 +1,32 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login_firebase/widgets/CustomTextField.dart';
 import 'package:login_firebase/widgets/PrimaryButton.dart';
 
-import '../widgets/RegularTextField.dart';
-
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   SignUpPage({super.key});
 
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  late FToast fToast;
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast();
+    fToast.init(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,52 +34,86 @@ class SignUpPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Sign up',
-          style: GoogleFonts.roboto(
-            fontWeight: FontWeight.w600
-          ),
+          style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
         ),
       ),
       body: Center(
         child: Container(
           margin: const EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  'Create your account',
-                  style: GoogleFonts.roboto(
-                    fontSize: 24
-                  ),
+                'Create your account',
+                style: GoogleFonts.roboto(fontSize: 24),
               ),
               const SizedBox(height: 40),
-              RegularTextField(placeholderText: 'Enter your email', controller: _emailController),
+              CustomTextField(
+                leadingIcon: Icons.mail_outline_rounded,
+                placeholderText: 'Enter your email',
+                displayVisibilityIcon: false,
+                controller: _emailController,
+                onChanged: (email) {
+                  setState(() {});
+                },
+              ),
               const SizedBox(height: 20),
-              RegularTextField(placeholderText: 'Enter your name', controller: _nameController),
-              const SizedBox(height: 20),
-              RegularTextField(placeholderText: 'Choose a password', controller: _passwordController),
-              const SizedBox(height: 20),
-              RegularTextField(placeholderText: 'Confirm password', controller: _confirmPasswordController),
+              CustomTextField(
+                  leadingIcon: Icons.lock_open_rounded,
+                  placeholderText: 'Choose your password',
+                  displayVisibilityIcon: true,
+                  controller: _passwordController,
+                  onChanged: (password) {
+                    setState(() {});
+                  }),
+              const SizedBox(height: 10),
+              Text('Password must be at least 6 characters',
+                  style: GoogleFonts.roboto(color: Colors.grey)),
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: LinearProgressIndicator(
+                  value: _calculatePasswordStrength(),
+                  minHeight: 10.0,
+                  backgroundColor: Colors.grey.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _passwordController.text.length >= 6
+                        ? Colors.green.shade400
+                        : Colors.red.shade400,
+                  ),
+                ),
+              ),
               const SizedBox(height: 40),
               PrimaryButton(
                 text: 'SIGN UP',
-                onPressed: () async {
-                  try {
-                    print('pressed');
-                    UserCredential userCredential =
-                        await _auth.createUserWithEmailAndPassword(
-                      email: _emailController.text,
-                      password: _passwordController.text,
-                    );
-                    print('User ID: ${userCredential.user!.uid}');
-                  } catch (e) {
-                    print('Error: $e');
-                  }
-                },
+                onPressed: _passwordController.text.length >= 6 &&
+                        _emailController.text.isNotEmpty
+                    ? _signUpUser
+                    : null,
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _signUpUser() async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  double _calculatePasswordStrength() {
+    int passwordLength = _passwordController.text.length;
+    double strength = passwordLength / 6.0;
+    return strength;
   }
 }
