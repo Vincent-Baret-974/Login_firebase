@@ -72,56 +72,52 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.grey.shade400, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 30),
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.facebook_rounded,
-                        size: 35,
-                      ),
-                      onPressed: () {},
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.facebook_rounded,
+                      size: 35,
                     ),
-                    const SizedBox(width: 30),
-                    SizedBox(
-                      height: 45,
-                      child: Image.network(
-                          'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
-                          fit: BoxFit.cover),
-                    )
-                  ],
-                ),
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 30),
+                  SizedBox(
+                    height: 45,
+                    child: Image.network(
+                        'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
+                        fit: BoxFit.cover),
+                  )
+                ],
               ),
               const SizedBox(height: 30),
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Don\'t have an account?',
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Don\'t have an account?',
+                    style: GoogleFonts.roboto(
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpPage()),
+                      );
+                    },
+                    child: Text(
+                      'Sign up',
                       style: GoogleFonts.roboto(
-                          color: Colors.grey.shade400,
-                          fontWeight: FontWeight.w600),
+                          color: Colors.blueAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700),
                     ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()),
-                        );
-                      },
-                      child: Text(
-                        'Sign up',
-                        style: GoogleFonts.roboto(
-                            color: Colors.blueAccent,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               )
             ],
           ),
