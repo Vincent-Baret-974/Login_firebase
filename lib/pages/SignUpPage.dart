@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:login_firebase/widgets/CustomTextField.dart';
 import 'package:login_firebase/widgets/PrimaryButton.dart';
 
@@ -16,6 +17,8 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   final TextEditingController _emailController = TextEditingController();
 
@@ -33,6 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'Sign up',
@@ -93,7 +97,35 @@ class _SignUpPageState extends State<SignUpPage> {
                         _emailController.text.isNotEmpty
                     ? _signUpUser
                     : null,
-              )
+              ),
+              const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    Text(
+                        'OR',
+                        style: GoogleFonts.roboto(
+                            color: Colors.grey.shade400,
+                            fontWeight: FontWeight.w600
+                        )
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () async {
+                        await _handleSignUp();
+                      },
+                      child: Text(
+                        'Sign up with Google',
+                        style: GoogleFonts.roboto(
+                            color: Colors.blueAccent,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -129,6 +161,34 @@ class _SignUpPageState extends State<SignUpPage> {
     } catch (e) {
       showToastMessage('An error occurred.');
     }
+  }
+
+  Future<User?> _handleSignUp() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+      await googleSignInAccount!.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      final UserCredential authResult = await _auth.signInWithCredential(credential);
+      final User? user = authResult.user;
+
+      return user;
+    } on FirebaseAuthException catch (exception) {
+      if (exception.code == 'invalid-credential') {
+        showToastMessage('Invalid credentials');
+      } else {
+        showToastMessage('Sign up with Google failed');
+      }
+    } catch (error) {
+      showToastMessage('An error occurred');
+      return null;
+    }
+    return null;
   }
 
   double _calculatePasswordStrength() {
